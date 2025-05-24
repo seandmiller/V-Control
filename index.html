@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Documentation Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/diff.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="header-title">Machine Documentation Portal</h1>
+            <p class="header-subtitle">Documentation and change management system</p>
+        </div>
+    </header>
+    
+    <!-- Main content -->
+    <div class="container main-content">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2 class="sidebar-title">Documentation Pages</h2>
+            <ul id="page-list" class="page-list">
+                <!-- Page list will be populated by JavaScript -->
+            </ul>
+            
+            <div class="actions-container">
+                <h2 class="sidebar-title">Actions</h2>
+                <button id="create-page-btn" class="action-button">
+                    <img src="assets/icons/plus-circle.svg" alt="Create" class="button-icon">
+                    Create New Page
+                </button>
+                <button id="import-web-btn" class="action-button">
+                    <img src="assets/icons/globe.svg" alt="Import" class="button-icon">
+                    Import from Web
+                </button>
+            </div>
+        </div>
+        
+        <!-- Content area -->
+        <div class="content-area">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button id="view-tab" class="tab-button active">View</button>
+                <button id="edit-tab" class="tab-button">Edit</button>
+                <button id="requests-tab" class="tab-button">
+                    Change Requests
+                    <span id="pending-count" class="badge hidden">0</span>
+                </button>
+            </div>
+            
+            <!-- View content -->
+            <div id="view-content" class="tab-content active">
+                <div class="page-header">
+                    <h1 id="page-title" class="page-title"></h1>
+                    <div id="page-meta" class="page-meta"></div>
+                </div>
+                <div id="page-content" class="page-content"></div>
+                
+                <div class="action-bar">
+                    <button id="request-changes-btn" class="primary-button">
+                        <img src="assets/icons/edit.svg" alt="Edit" class="button-icon">
+                        Request Changes
+                    </button>
+                    <button id="delete-page-btn" class="danger-button">
+                        <img src="assets/icons/trash.svg" alt="Delete" class="button-icon">
+                        Delete Page
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Edit content -->
+            <div id="edit-content" class="tab-content">
+                <div class="edit-header">
+                    <h1 id="edit-title" class="edit-title">Editing: </h1>
+                    <p class="edit-instructions">
+                        Make your changes below and submit a change request for review.
+                    </p>
+                </div>
+                
+                <div class="edit-area">
+                    <textarea id="edit-textarea" class="edit-textarea"></textarea>
+                </div>
+                
+                <div class="edit-actions">
+                    <button id="submit-changes-btn" class="primary-button">
+                        <img src="assets/icons/save.svg" alt="Save" class="button-icon">
+                        Submit Change Request
+                    </button>
+                    <button id="cancel-edit-btn" class="secondary-button">Cancel</button>
+                </div>
+            </div>
+            
+            <!-- Change requests -->
+            <div id="requests-content" class="tab-content">
+                <h1 class="requests-title">Change Requests</h1>
+                <div id="requests-list" class="requests-list">
+                    <!-- Requests will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">Import from Web</h2>
+            <div class="form-group">
+                <label for="import-url" class="form-label">Enter URL:</label>
+                <input type="url" id="import-url" class="form-input" placeholder="https://example.com/article">
+                <small class="form-hint">
+                    💡 Try: "demo" for sample content, or any valid URL
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="import-title" class="form-label">Page Title (optional):</label>
+                <input type="text" id="import-title" class="form-input" placeholder="Auto-detected from webpage">
+            </div>
+            <div class="form-group">
+                <label class="form-checkbox-label">
+                    <input type="checkbox" id="import-styles" class="form-checkbox"> 
+                    Import webpage styles (preserves original appearance)
+                </label>
+            </div>
+            <div class="form-tips">
+                <strong>Quick Start:</strong> Type "demo" to test with sample styled content!
+                <br><small>💡 Enable "Import styles" to preserve original webpage appearance</small>
+            </div>
+            <div id="import-status" class="import-status hidden"></div>
+            <div class="modal-actions">
+                <button id="import-confirm-btn" class="primary-button">Import</button>
+                <button id="import-cancel-btn" class="secondary-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">Machine Documentation Portal © 2025</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript files -->
+    <script src="js/data.js"></script>
+    <script src="js/diffViewer.js"></script>
+    <script src="js/pageManager.js"></script>
+    <script src="js/requestManager.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

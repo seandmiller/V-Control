@@ -1,0 +1,27 @@
+/* Diff Viewer Styles */
+.diff-content {
+    font-family: monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.added {
+    background-color: #e6ffed;
+    padding: 2px;
+    display: block;
+    margin: 2px 0;
+}
+
+.removed {
+    background-color: #ffeef0;
+    padding: 2px;
+    text-decoration: line-through;
+    display: block;
+    margin: 2px 0;
+}
+
+.unchanged {
+    display: block;
+    margin: 2px 0;
+}
