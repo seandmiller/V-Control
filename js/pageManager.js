@@ -41,9 +41,10 @@ const PageManager = {
             const inlineStyle = element.getAttribute('style');
             if (inlineStyle && this.isSafeStyle(inlineStyle)) {
                 // Create more specific selectors to avoid conflicts
-                const classes = element.className ? '.' + element.className.split(' ').join('.') : '';
-                const selector = tagName + classes;
-                const cssRule = `${selector} { ${inlineStyle} }`;
+// Use only the first class to avoid overly specific selectors
+const firstClass = element.className ? element.className.split(' ')[0].trim() : '';
+const selector = firstClass ? `${tagName}.${firstClass}` : tagName;
+const cssRule = `${selector} { ${inlineStyle} }`;
                 inlineStyles.add(cssRule);
             }
         });
