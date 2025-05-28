@@ -1,4 +1,4 @@
-# Machine Documentation Portal
+# Documentation Portal
 
 A modern, web-based documentation management system with built-in change request workflow and approval process. Perfect for teams that need collaborative document editing with version control and approval workflows.
 
