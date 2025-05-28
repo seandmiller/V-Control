@@ -16,6 +16,49 @@ const PageManager = {
         this.showActivePage();
     },
     
+    // Set an active page and update the UI
+    setActivePage: function(pageId) {
+        this.activePage = pageId;
+        
+        // Update active class in page list
+        document.querySelectorAll('.page-item').forEach(item => {
+            if (parseInt(item.dataset.pageId) === pageId) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+        
+        this.showActivePage();
+        
+        // Update the page name indicator if App is available
+        if (typeof App !== 'undefined' && App.updatePageNameIndicator) {
+            App.updatePageNameIndicator();
+        }
+    },
+    
+    // Display the active page in the view tab
+    showActivePage: function() {
+        const currentPage = this.getPageById(this.activePage);
+        if (!currentPage) return;
+        
+        // Update page title and metadata
+        document.getElementById('page-title').textContent = currentPage.title;
+        document.getElementById('page-meta').textContent = 
+            `Last updated: ${currentPage.lastUpdated} by ${currentPage.author}`;
+        
+        // Update page content
+        document.getElementById('page-content').innerHTML = currentPage.content;
+        
+        // Update edit title
+        document.getElementById('edit-title').textContent = `Editing: ${currentPage.title}`;
+        
+        // Update the page name indicator if App is available
+        if (typeof App !== 'undefined' && App.updatePageNameIndicator) {
+            App.updatePageNameIndicator();
+        }
+    },
+    
     // Extract styles from the parsed HTML document
     extractStyles: function(doc, baseUrl) {
         let styles = '';
@@ -241,39 +284,6 @@ img { max-width: 100%; height: auto; }
             
             pageListElement.appendChild(listItem);
         });
-    },
-    
-    // Set an active page and update the UI
-    setActivePage: function(pageId) {
-        this.activePage = pageId;
-        
-        // Update active class in page list
-        document.querySelectorAll('.page-item').forEach(item => {
-            if (parseInt(item.dataset.pageId) === pageId) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        });
-        
-        this.showActivePage();
-    },
-    
-    // Display the active page in the view tab
-    showActivePage: function() {
-        const currentPage = this.getPageById(this.activePage);
-        if (!currentPage) return;
-        
-        // Update page title and metadata
-        document.getElementById('page-title').textContent = currentPage.title;
-        document.getElementById('page-meta').textContent = 
-            `Last updated: ${currentPage.lastUpdated} by ${currentPage.author}`;
-        
-        // Update page content
-        document.getElementById('page-content').innerHTML = currentPage.content;
-        
-        // Update edit title
-        document.getElementById('edit-title').textContent = `Editing: ${currentPage.title}`;
     },
     
     // Get a page by its ID

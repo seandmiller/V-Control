@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Machine Documentation Portal</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/diff.css">
 </head>
 <body>
@@ -58,15 +60,23 @@
                 </div>
                 <div id="page-content" class="page-content"></div>
                 
-                <div class="action-bar">
-                    <button id="request-changes-btn" class="primary-button">
-                        <img src="assets/icons/edit.svg" alt="Edit" class="button-icon">
-                        Request Changes
-                    </button>
-                    <button id="delete-page-btn" class="danger-button">
-                        <img src="assets/icons/trash.svg" alt="Delete" class="button-icon">
-                        Delete Page
-                    </button>
+                <!-- Fixed Bottom Action Bar - Always visible when scrolling -->
+                <div class="fixed-action-bar">
+                    <div class="page-indicator">
+                        <img src="assets/icons/edit.svg" alt="Current Page" class="page-indicator-icon">
+                        <span id="current-page-name">Loading...</span>
+                    </div>
+                    <div class="action-divider"></div>
+                    <div class="mobile-button-row">
+                        <button id="request-changes-btn" class="primary-button">
+                            <img src="assets/icons/edit.svg" alt="Edit" class="button-icon">
+                            Request Changes
+                        </button>
+                        <button id="delete-page-btn" class="danger-button">
+                            <img src="assets/icons/trash.svg" alt="Delete" class="button-icon">
+                            Delete Page
+                        </button>
+                    </div>
                 </div>
             </div>
             

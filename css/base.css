@@ -1,0 +1,188 @@
+/* base.css - CSS Variables, Reset, Typography & Global Styles */
+
+/* CSS Variables - Color Scheme & Design System */
+:root {
+    /* Primary Colors - Teal/Mint Green Theme */
+    --primary-color: #10b981;           /* Teal green like the ACCEPT button */
+    --primary-hover: #059669;           /* Darker teal on hover */
+    --primary-light: #6ee7b7;           /* Light teal */
+    --primary-bg: #d1fae5;              /* Very light teal background */
+    
+    /* Secondary Colors - Clean Grays */
+    --secondary-color: #f1f5f9;         /* Very light gray */
+    --secondary-hover: #e2e8f0;         /* Light gray hover */
+    --secondary-dark: #64748b;          /* Medium gray */
+    
+    /* Status Colors */
+    --success-color: #10b981;           /* Same as primary - teal */
+    --success-bg: #d1fae5;              /* Light teal */
+    --warning-color: #f59e0b;           /* Warm amber */
+    --warning-bg: #fef3c7;              /* Light amber */
+    --danger-color: #ef4444;            /* Clean red */
+    --danger-bg: #fef2f2;               /* Light red */
+    
+    /* Text Colors */
+    --text-primary: #0f172a;            /* Very dark slate */
+    --text-secondary: #64748b;          /* Medium gray */
+    --text-muted: #94a3b8;              /* Light gray */
+    
+    /* Background Colors */
+    --bg-primary: #ffffff;              /* Pure white */
+    --bg-secondary: #f8fafc;            /* Off-white */
+    --bg-tertiary: #f1f5f9;             /* Light gray */
+    
+    /* Border and Divider Colors */
+    --border-color: #e2e8f0;            /* Light gray border */
+    --border-light: #f1f5f9;            /* Very light border */
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* CSS Reset & Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
+    font-size: 16px;
+}
+
+/* Container & Layout Utilities */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    margin: 1em 0 0.5em 0;
+    line-height: 1.2;
+}
+
+p {
+    margin: 0.5em 0;
+}
+
+ul, ol {
+    margin: 0.5em 0;
+    padding-left: 2em;
+}
+
+blockquote {
+    margin: 1em 0;
+    padding: 0.5em 1em;
+    border-left: 3px solid #ccc;
+    background: #f9f9f9;
+}
+
+code {
+    background: #f5f5f5;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+pre {
+    background: #f5f5f5;
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Icon Styles */
+.button-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-right: 0.75rem;
+}
+
+/* Badge Component */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+}
+
+.badge.hidden {
+    display: none;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none;
+}
+
+/* Import Status Styles */
+.import-status {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+
+.import-status.loading {
+    background-color: var(--warning-bg);
+    color: var(--warning-color);
+    border-color: #fcd34d;
+}
+
+.import-status.success {
+    background-color: var(--success-bg);
+    color: var(--success-color);
+    border-color: var(--primary-light);
+}
+
+.import-status.error {
+    background-color: var(--danger-bg);
+    color: var(--danger-color);
+    border-color: #fca5a5;
+}
+
+.import-status.hidden {
+    display: none;
+}
+
+/* Imported Content Styling */
+[class*="imported-content-"] {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    background-color: var(--bg-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+[class*="imported-content-"]:before {
+    content: "📄 Imported Content";
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--primary-bg);
+}

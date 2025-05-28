@@ -15,6 +15,19 @@ const App = {
         
         // Show the view tab by default
         this.showTab('view');
+        
+        // Update the page name indicator
+        this.updatePageNameIndicator();
+    },
+
+    // Update the page name indicator in the fixed action bar
+    updatePageNameIndicator: function() {
+        const currentPage = PageManager.getPageById(PageManager.activePage);
+        const pageNameElement = document.getElementById('current-page-name');
+        
+        if (currentPage && pageNameElement) {
+            pageNameElement.textContent = currentPage.title;
+        }
     },
 
     // Handle page deletion with confirmation
@@ -60,8 +73,9 @@ const App = {
             }
             alert(successMessage);
             
-            // Switch to view tab after deletion
+            // Switch to view tab after deletion and update page name
             this.showTab('view');
+            this.updatePageNameIndicator();
         } else {
             alert('Failed to delete the page. Please try again.');
         }
@@ -108,6 +122,7 @@ const App = {
                 PageManager.createPage(newTitle);
                 this.showTab('edit');
                 PageManager.prepareEditPage();
+                this.updatePageNameIndicator();
             }
         });
 
@@ -212,6 +227,9 @@ const App = {
         try {
             const finalUrl = url === 'demo' ? 'demo' : (url.startsWith('http') ? url : 'https://' + url);
             await PageManager.importFromWeb(finalUrl, customTitle, importStyles);
+            
+            // Update page name indicator after successful import
+            this.updatePageNameIndicator();
         } catch (error) {
             console.error('Import failed:', error);
         } finally {
