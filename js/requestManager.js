@@ -3,7 +3,7 @@ const RequestManager = {
     // Reference to the change request data
     changeRequests: [],
     
-    // Get current local date in YYYY-MM-DD format
+
     getCurrentLocalDate: function() {
         const now = new Date();
         const year = now.getFullYear();
@@ -104,7 +104,7 @@ const RequestManager = {
                 const diffPlaceholder = document.getElementById(`diff-placeholder-${request.id}`);
                 
                 if (diffContent.style.display === 'none') {
-                    // Show diff content
+                  
                     diffContent.innerHTML = DiffViewer.generateDiffHtml(
                         request.originalContent,
                         request.proposedContent
@@ -113,14 +113,13 @@ const RequestManager = {
                     diffPlaceholder.style.display = 'none';
                     toggleButton.textContent = 'Hide changes';
                 } else {
-                    // Hide diff content
+              
                     diffContent.style.display = 'none';
                     diffPlaceholder.style.display = 'block';
                     toggleButton.textContent = 'Show changes';
                 }
             });
-            
-            // Add event listeners for action buttons if present
+        
             if (request.status === 'pending') {
                 const approveButton = requestElement.querySelector(`.approve-button[data-request-id="${request.id}"]`);
                 approveButton.addEventListener('click', () => {
@@ -184,7 +183,7 @@ const RequestManager = {
         return true;
     },
     
-    // Delete all requests for a specific page (used when page is deleted)
+  
     deleteRequestsByPage: function(pageId) {
         const initialLength = this.changeRequests.length;
         this.changeRequests = this.changeRequests.filter(request => request.pageId !== pageId);
@@ -195,10 +194,10 @@ const RequestManager = {
             this.updatePendingCount();
         }
         
-        return initialLength - this.changeRequests.length; // Return number of deleted requests
+        return initialLength - this.changeRequests.length; 
     },
     
-    // Update the pending request count badge
+
     updatePendingCount: function() {
         const pendingCount = this.changeRequests.filter(r => r.status === 'pending').length;
         App.updatePendingCount(pendingCount);
