@@ -3,6 +3,15 @@ const RequestManager = {
     // Reference to the change request data
     changeRequests: [],
     
+    // Get current local date in YYYY-MM-DD format
+    getCurrentLocalDate: function() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    },
+    
     // Initialize with initial data
     init: function(initialRequests) {
         this.changeRequests = initialRequests;
@@ -137,7 +146,7 @@ const RequestManager = {
             pageId: pageId,
             originalContent: originalContent,
             proposedContent: proposedContent,
-            requestDate: new Date().toISOString().split('T')[0],
+            requestDate: this.getCurrentLocalDate(),
             requester: 'Current User',
             status: 'pending'
         };

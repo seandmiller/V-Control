@@ -291,6 +291,15 @@ img { max-width: 100%; height: auto; }
         return this.pages.find(page => page.id === pageId);
     },
     
+    // Get current local date in YYYY-MM-DD format
+    getCurrentLocalDate: function() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    },
+    
     // Create a new page
     createPage: function(title, content) {
         const newId = this.pages.length > 0 
@@ -301,7 +310,7 @@ img { max-width: 100%; height: auto; }
             id: newId,
             title: title || 'New Document',
             content: content || '<h1>New Document</h1><p>Add content here...</p>',
-            lastUpdated: new Date().toISOString().split('T')[0],
+            lastUpdated: this.getCurrentLocalDate(),
             author: 'Current User'
         };
         
@@ -317,7 +326,7 @@ img { max-width: 100%; height: auto; }
         if (pageIndex === -1) return false;
         
         this.pages[pageIndex].content = newContent;
-        this.pages[pageIndex].lastUpdated = new Date().toISOString().split('T')[0];
+        this.pages[pageIndex].lastUpdated = this.getCurrentLocalDate();
         this.showActivePage();
         return true;
     },
