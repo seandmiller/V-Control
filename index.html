@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/diff.css">
+    <link rel="stylesheet" href="css/wysiwyg.css">
 </head>
 <body>
     <!-- Header -->
@@ -85,12 +86,12 @@
                 <div class="edit-header">
                     <h1 id="edit-title" class="edit-title">Editing: </h1>
                     <p class="edit-instructions">
-                        Make your changes below and submit a change request for review.
+                        Use the toolbar above to format your content. The editor works like Google Docs or Word - just type and format as needed.
                     </p>
                 </div>
                 
                 <div class="edit-area">
-                    <textarea id="edit-textarea" class="edit-textarea"></textarea>
+                    <!-- WYSIWYG editor will be inserted here by JavaScript -->
                 </div>
                 
                 <div class="edit-actions">
@@ -155,6 +156,7 @@
     <!-- JavaScript files -->
     <script src="js/data.js"></script>
     <script src="js/diffViewer.js"></script>
+    <script src="js/editor.js"></script>
     <script src="js/pageManager.js"></script>
     <script src="js/requestManager.js"></script>
     <script src="js/app.js"></script>

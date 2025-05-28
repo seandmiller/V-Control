@@ -84,10 +84,10 @@ const PageManager = {
             const inlineStyle = element.getAttribute('style');
             if (inlineStyle && this.isSafeStyle(inlineStyle)) {
                 // Create more specific selectors to avoid conflicts
-// Use only the first class to avoid overly specific selectors
-const firstClass = element.className ? element.className.split(' ')[0].trim() : '';
-const selector = firstClass ? `${tagName}.${firstClass}` : tagName;
-const cssRule = `${selector} { ${inlineStyle} }`;
+                // Use only the first class to avoid overly specific selectors
+                const firstClass = element.className ? element.className.split(' ')[0].trim() : '';
+                const selector = firstClass ? `${tagName}.${firstClass}` : tagName;
+                const cssRule = `${selector} { ${inlineStyle} }`;
                 inlineStyles.add(cssRule);
             }
         });
@@ -327,7 +327,13 @@ img { max-width: 100%; height: auto; }
         const currentPage = this.getPageById(this.activePage);
         if (!currentPage) return;
         
-        document.getElementById('edit-textarea').value = currentPage.content;
+        // Initialize WYSIWYG editor if not already done
+        if (!WYSIWYGEditor.isInitialized) {
+            WYSIWYGEditor.init();
+        }
+        
+        // Set content in the WYSIWYG editor
+        WYSIWYGEditor.setContent(currentPage.content);
     },
 
     // Import content from web

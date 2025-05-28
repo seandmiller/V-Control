@@ -1,0 +1,299 @@
+/* wysiwyg.css - Styles for the WYSIWYG Editor */
+
+/* ==================== WYSIWYG TOOLBAR ==================== */
+
+.wysiwyg-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 12px 12px 0 0;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow-sm);
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 1.5rem;
+    background-color: var(--border-color);
+    margin: 0 0.5rem;
+}
+
+.toolbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 2.5rem;
+    height: 2.5rem;
+}
+
+.toolbar-btn:hover {
+    background-color: var(--primary-bg);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.toolbar-btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.toolbar-btn:active {
+    transform: translateY(0);
+}
+
+.toolbar-select {
+    padding: 0.5rem 0.75rem;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+.toolbar-select:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+
+.toolbar-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* ==================== WYSIWYG EDITOR ==================== */
+
+.wysiwyg-editor {
+    min-height: 400px;
+    max-height: 600px;
+    padding: 1.5rem;
+    border: 2px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    background-color: var(--bg-primary);
+    overflow-y: auto;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    transition: border-color 0.2s ease;
+}
+
+.wysiwyg-editor:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* ==================== WYSIWYG CONTENT STYLES ==================== */
+
+.wysiwyg-editor h1,
+.wysiwyg-editor h2,
+.wysiwyg-editor h3,
+.wysiwyg-editor h4,
+.wysiwyg-editor h5,
+.wysiwyg-editor h6 {
+    margin: 1.5em 0 0.5em 0;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.wysiwyg-editor h1:first-child,
+.wysiwyg-editor h2:first-child,
+.wysiwyg-editor h3:first-child,
+.wysiwyg-editor h4:first-child,
+.wysiwyg-editor h5:first-child,
+.wysiwyg-editor h6:first-child,
+.wysiwyg-editor p:first-child {
+    margin-top: 0;
+}
+
+.wysiwyg-editor h1 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-bg);
+    padding-bottom: 0.5rem;
+}
+
+.wysiwyg-editor h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.wysiwyg-editor h3 {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+
+.wysiwyg-editor h4 {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+
+.wysiwyg-editor p {
+    margin: 1em 0;
+    line-height: 1.7;
+}
+
+.wysiwyg-editor ul,
+.wysiwyg-editor ol {
+    margin: 1em 0;
+    padding-left: 2rem;
+}
+
+.wysiwyg-editor li {
+    margin: 0.5em 0;
+    line-height: 1.6;
+}
+
+.wysiwyg-editor a {
+    color: var(--primary-color);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.wysiwyg-editor a:hover {
+    border-bottom-color: var(--primary-color);
+}
+
+.wysiwyg-editor strong,
+.wysiwyg-editor b {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.wysiwyg-editor em,
+.wysiwyg-editor i {
+    font-style: italic;
+}
+
+.wysiwyg-editor u {
+    text-decoration: underline;
+}
+
+.wysiwyg-editor hr {
+    margin: 2em 0;
+    border: none;
+    border-top: 2px solid var(--border-color);
+    border-radius: 1px;
+}
+
+.wysiwyg-editor blockquote {
+    margin: 1.5em 0;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid var(--primary-color);
+    background-color: var(--primary-bg);
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+/* Text alignment */
+.wysiwyg-editor [style*="text-align: center"] {
+    text-align: center;
+}
+
+.wysiwyg-editor [style*="text-align: right"] {
+    text-align: right;
+}
+
+.wysiwyg-editor [style*="text-align: left"] {
+    text-align: left;
+}
+
+/* Placeholder styling */
+.wysiwyg-editor:empty::before,
+.wysiwyg-editor p:only-child:empty::before {
+    content: 'Start typing here...';
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+@media (max-width: 768px) {
+    .wysiwyg-toolbar {
+        padding: 0.75rem;
+        gap: 0.25rem;
+    }
+    
+    .toolbar-btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+        min-width: 2rem;
+        height: 2rem;
+    }
+    
+    .toolbar-select {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+        min-width: 100px;
+    }
+    
+    .toolbar-divider {
+        display: none;
+    }
+    
+    .wysiwyg-editor {
+        min-height: 300px;
+        padding: 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .wysiwyg-editor h1 {
+        font-size: 1.75rem;
+    }
+    
+    .wysiwyg-editor h2 {
+        font-size: 1.4rem;
+    }
+    
+    .wysiwyg-editor h3 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wysiwyg-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .toolbar-group {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .toolbar-select {
+        min-width: auto;
+        flex: 1;
+    }
+}

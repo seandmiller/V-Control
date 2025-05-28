@@ -95,8 +95,14 @@ const App = {
         });
         
         document.getElementById('submit-changes-btn').addEventListener('click', () => {
-            const editContent = document.getElementById('edit-textarea').value;
+            // Get content from WYSIWYG editor instead of textarea
+            const editContent = WYSIWYGEditor.getContent();
             const currentPage = PageManager.getPageById(PageManager.activePage);
+            
+            if (!currentPage) {
+                alert('No page selected for editing.');
+                return;
+            }
             
             // Only create a change request if the content has changed
             if (DiffViewer.hasChanges(currentPage.content, editContent)) {
@@ -106,6 +112,7 @@ const App = {
                     editContent
                 );
                 this.showTab('requests');
+               
             } else {
                 alert('No changes were made to the document.');
             }
