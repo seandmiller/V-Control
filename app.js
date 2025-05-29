@@ -22,6 +22,8 @@ const App = {
         // Update the page name indicator and comments
         this.updatePageNameIndicator();
         this.updateCommentSystem();
+        
+        console.log('App initialized successfully');
     },
 
     // Update the page name indicator in the fixed action bar
@@ -36,6 +38,7 @@ const App = {
 
     // Update comment system for current page
     updateCommentSystem: function() {
+        console.log('App: Updating comment system for page', PageManager.activePage);
         // Set active page in comment manager
         CommentManager.setActivePage(PageManager.activePage);
     },
@@ -188,17 +191,20 @@ const App = {
         document.addEventListener('click', (e) => {
             const pageItem = e.target.closest('.page-item');
             if (pageItem) {
+                console.log('Page item clicked:', pageItem.dataset.pageId);
                 // Small delay to ensure PageManager has updated first
                 setTimeout(() => {
                     this.updatePageNameIndicator();
                     this.updateCommentSystem();
-                }, 10);
+                }, 50);
             }
         });
     },
     
     // Switch between tabs
     showTab: function(tabName) {
+        console.log('Switching to tab:', tabName);
+        
         // Hide all tab content
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.remove('active');

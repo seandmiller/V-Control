@@ -18,6 +18,7 @@ const CommentManager = {
     
     // Set active page and update comment display
     setActivePage: function(pageId) {
+        console.log('CommentManager: Setting active page to', pageId);
         this.activePageId = pageId;
         this.updateCommentDisplay();
         this.setupPageHoverListeners();
@@ -31,67 +32,78 @@ const CommentManager = {
             this.createCommentSidebar();
         }
         
-        // Create comment button in view mode if it doesn't exist
-        const commentBtn = document.getElementById('add-comment-btn');
-        if (!commentBtn) {
-            this.createCommentButton();
-        }
+        // Create comment buttons if they don't exist
+        this.createCommentButtons();
     },
     
     // Create the comment sidebar
     createCommentSidebar: function() {
-        const mainContent = document.querySelector('.main-content');
+        const body = document.body;
         const sidebar = document.createElement('div');
         sidebar.className = 'comment-sidebar hidden';
         sidebar.innerHTML = `
             <div class="comment-sidebar-header">
-                <h3 class="comment-sidebar-title">Comments</h3>
-                <button class="comment-close-btn" type="button">
+                <h3 class="comment-sidebar-title">Page Comments</h3>
+                <button class="comment-close-btn" type="button" title="Close Comments">
                     <img src="assets/icons/x-circle.svg" alt="Close" width="20" height="20">
                 </button>
             </div>
             <div class="comment-sidebar-content">
+                <div class="comment-sidebar-actions">
+                    <button id="add-comment-sidebar-btn" class="primary-button" style="width: 100%; margin-bottom: 1rem;">
+                        <img src="assets/icons/plus-circle.svg" alt="Add" class="button-icon">
+                        Add New Comment
+                    </button>
+                </div>
                 <div id="comments-list" class="comments-list">
                     <!-- Comments will be populated here -->
                 </div>
             </div>
         `;
         
-        mainContent.appendChild(sidebar);
+        body.appendChild(sidebar);
         
         // Add close button event listener
         sidebar.querySelector('.comment-close-btn').addEventListener('click', () => {
             this.hideCommentSidebar();
         });
+        
+        // Add comment button in sidebar
+        sidebar.querySelector('#add-comment-sidebar-btn').addEventListener('click', () => {
+            this.showAddCommentForm();
+        });
     },
     
-    // Create add comment button
-    createCommentButton: function() {
+    // Create comment buttons in the action bar
+    createCommentButtons: function() {
         const actionBar = document.querySelector('.fixed-action-bar .mobile-button-row');
         if (actionBar) {
-            const commentBtn = document.createElement('button');
-            commentBtn.id = 'add-comment-btn';
-            commentBtn.className = 'primary-button';
-            commentBtn.innerHTML = `
-                <img src="assets/icons/edit.svg" alt="Comment" class="button-icon">
-                Add Comment
+            // Remove existing comment buttons first
+            const existingBtns = actionBar.querySelectorAll('#add-comment-btn, #view-comments-btn');
+            existingBtns.forEach(btn => btn.remove());
+            
+            // Create view comments button
+            const viewCommentsBtn = document.createElement('button');
+            viewCommentsBtn.id = 'view-comments-btn';
+            viewCommentsBtn.className = 'primary-button';
+            viewCommentsBtn.innerHTML = `
+                <img src="assets/icons/edit.svg" alt="Comments" class="button-icon">
+                <span id="comments-btn-text">Comments</span>
             `;
             
             // Insert before the delete button
             const deleteBtn = document.getElementById('delete-page-btn');
-            actionBar.insertBefore(commentBtn, deleteBtn);
+            actionBar.insertBefore(viewCommentsBtn, deleteBtn);
+            
+            // Add event listener
+            viewCommentsBtn.addEventListener('click', () => {
+                this.toggleCommentSidebar();
+            });
         }
     },
     
     // Setup event listeners
     setupEventListeners: function() {
-        // Add comment button click
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('#add-comment-btn')) {
-                this.showAddCommentForm();
-            }
-        });
-        
         // Handle comment form submission
         document.addEventListener('submit', (e) => {
             if (e.target.id === 'comment-form') {
@@ -99,6 +111,15 @@ const CommentManager = {
                 this.handleCommentSubmission(e.target);
             }
         });
+    },
+    
+    // Toggle comment sidebar visibility
+    toggleCommentSidebar: function() {
+        if (this.sidebarVisible) {
+            this.hideCommentSidebar();
+        } else {
+            this.showCommentSidebar();
+        }
     },
     
     // Setup hover listeners for commented content
@@ -111,16 +132,21 @@ const CommentManager = {
         // Remove existing hover listeners
         this.removeHoverListeners();
         
-        // Get comments for active page
+        // Get comments for active page only
         const pageComments = this.getCommentsByPage(this.activePageId);
+        console.log('Setting up hover listeners for', pageComments.length, 'comments on page', this.activePageId);
         
         // Add hover listeners for elements with comments
         pageComments.forEach(comment => {
             if (comment.elementSelector) {
-                const elements = pageContent.querySelectorAll(comment.elementSelector);
-                elements.forEach(element => {
-                    this.addCommentHoverListener(element, comment);
-                });
+                try {
+                    const elements = pageContent.querySelectorAll(comment.elementSelector);
+                    elements.forEach(element => {
+                        this.addCommentHoverListener(element, comment);
+                    });
+                } catch (e) {
+                    console.warn('Invalid selector for comment:', comment.elementSelector);
+                }
             }
         });
     },
@@ -203,6 +229,9 @@ const CommentManager = {
         const form = modal.querySelector('#comment-form');
         form.reset();
         
+        // Populate element selector for current page
+        this.populateElementSelector();
+        
         // Show modal
         modal.classList.add('active');
         
@@ -241,9 +270,6 @@ const CommentManager = {
         `;
         
         document.body.appendChild(modal);
-        
-        // Populate element selector
-        this.populateElementSelector();
         
         // Close modal when clicking outside
         modal.addEventListener('click', (e) => {
@@ -313,43 +339,45 @@ const CommentManager = {
         // Close modal
         document.getElementById('comment-modal').classList.remove('active');
         
-        // Show comments sidebar
-        this.showCommentSidebar();
+        // Show comments sidebar if not already visible
+        if (!this.sidebarVisible) {
+            this.showCommentSidebar();
+        }
     },
     
     // Add a new comment
     addComment: function(comment) {
         this.comments.push(comment);
+        console.log('Added comment to page', comment.pageId, ':', comment.content);
         this.updateCommentDisplay();
         this.setupPageHoverListeners();
     },
     
     // Update comment display
     updateCommentDisplay: function() {
+        this.updateCommentButton();
         if (this.sidebarVisible) {
             this.renderComments();
         }
-        this.updateCommentButton();
     },
     
     // Update comment button with count
     updateCommentButton: function() {
-        const btn = document.getElementById('add-comment-btn');
-        if (!btn || !this.activePageId) return;
+        const btn = document.getElementById('view-comments-btn');
+        const btnText = document.getElementById('comments-btn-text');
+        if (!btn || !btnText || !this.activePageId) return;
         
         const pageComments = this.getCommentsByPage(this.activePageId);
         const count = pageComments.length;
         
+        console.log('Updating comment button for page', this.activePageId, '- found', count, 'comments');
+        
         if (count > 0) {
-            btn.innerHTML = `
-                <img src="assets/icons/edit.svg" alt="Comment" class="button-icon">
-                Comments (${count})
-            `;
+            btnText.textContent = `Comments (${count})`;
+            btn.style.backgroundColor = 'var(--primary-color)';
         } else {
-            btn.innerHTML = `
-                <img src="assets/icons/edit.svg" alt="Comment" class="button-icon">  
-                Add Comment
-            `;
+            btnText.textContent = 'Comments';
+            btn.style.backgroundColor = 'var(--primary-color)';
         }
     },
     
@@ -360,6 +388,7 @@ const CommentManager = {
             sidebar.classList.remove('hidden');
             this.sidebarVisible = true;
             this.renderComments();
+            console.log('Showing comment sidebar for page', this.activePageId);
         }
     },
     
@@ -378,6 +407,7 @@ const CommentManager = {
         if (!commentsList || !this.activePageId) return;
         
         const pageComments = this.getCommentsByPage(this.activePageId);
+        console.log('Rendering', pageComments.length, 'comments for page', this.activePageId);
         
         if (pageComments.length === 0) {
             commentsList.innerHTML = '<p class="no-comments">No comments on this page yet.</p>';
@@ -400,7 +430,11 @@ const CommentManager = {
                     <div class="comment-location">
                         <small>📍 Linked to: ${this.getElementDescription(comment.elementSelector)}</small>
                     </div>
-                ` : ''}
+                ` : `
+                    <div class="comment-location">
+                        <small>💬 General page comment</small>
+                    </div>
+                `}
                 <div class="comment-actions">
                     <button class="comment-resolve-btn" onclick="CommentManager.resolveComment(${comment.id})">
                         Resolve
@@ -430,16 +464,19 @@ const CommentManager = {
         const comment = this.comments.find(c => c.id === commentId);
         if (comment) {
             comment.status = 'resolved';
+            console.log('Resolved comment', commentId);
             this.updateCommentDisplay();
             this.setupPageHoverListeners();
         }
     },
     
-    // Get comments for a specific page
+    // Get comments for a specific page (only active comments)
     getCommentsByPage: function(pageId) {
-        return this.comments.filter(comment => 
+        const filtered = this.comments.filter(comment => 
             comment.pageId === pageId && comment.status === 'active'
         );
+        console.log('getCommentsByPage for page', pageId, ':', filtered.length, 'comments found');
+        return filtered;
     },
     
     // Generate unique comment ID
@@ -452,7 +489,7 @@ const CommentManager = {
     // Get current date and time
     getCurrentDateTime: function() {
         const now = new Date();
-        return now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {
+        return now.toLocaleDateString() + ', ' + now.toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit'
         });
@@ -462,6 +499,6 @@ const CommentManager = {
     cleanup: function() {
         this.removeHoverListeners();
         this.hideCommentTooltip();
-        this.hideCommentSidebar();
+        // Don't auto-hide sidebar when cleaning up - let user control it
     }
 };

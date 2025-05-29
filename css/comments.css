@@ -7,7 +7,7 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 400px;
+    width: 420px;
     height: 100vh;
     background-color: var(--bg-primary);
     border-left: 1px solid var(--border-color);
@@ -31,6 +31,7 @@
     padding: 1.5rem;
     border-bottom: 1px solid var(--border-color);
     background-color: var(--bg-secondary);
+    flex-shrink: 0;
 }
 
 .comment-sidebar-title {
@@ -47,6 +48,9 @@
     padding: 0.5rem;
     border-radius: 4px;
     transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .comment-close-btn:hover {
@@ -57,6 +61,13 @@
     flex: 1;
     overflow-y: auto;
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-sidebar-actions {
+    flex-shrink: 0;
+    margin-bottom: 1rem;
 }
 
 /* Comments List */
@@ -64,6 +75,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    flex: 1;
 }
 
 .comment-item {
@@ -110,6 +122,7 @@
 .comment-location small {
     color: var(--text-secondary);
     font-size: 0.8rem;
+    font-style: italic;
 }
 
 .comment-actions {
@@ -137,6 +150,9 @@
     color: var(--text-muted);
     font-style: italic;
     padding: 2rem;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
 }
 
 /* Commented Elements */
@@ -152,6 +168,8 @@
 
 .has-comment:hover {
     background-color: rgba(16, 185, 129, 0.15);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+    border-radius: 4px;
 }
 
 /* Comment Tooltip */
@@ -203,6 +221,37 @@
     resize: vertical;
 }
 
+/* Comment Button Styling */
+#view-comments-btn {
+    position: relative;
+}
+
+#view-comments-btn.has-comments {
+    background-color: var(--warning-color) !important;
+}
+
+#view-comments-btn.has-comments:hover {
+    background-color: #d97706 !important;
+}
+
+/* Comments indicator badge */
+.comment-count-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: var(--danger-color);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--bg-primary);
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .comment-sidebar {
@@ -213,5 +262,31 @@
     .comment-tooltip {
         max-width: 250px;
         font-size: 0.8rem;
+    }
+    
+    .comment-sidebar-content {
+        padding: 0.75rem;
+    }
+    
+    .comment-item {
+        padding: 0.75rem;
+    }
+    
+    .comment-sidebar-header {
+        padding: 1rem;
+    }
+}
+
+/* Overlay for mobile when sidebar is open */
+@media (max-width: 768px) {
+    body.comment-sidebar-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 199;
     }
 }
