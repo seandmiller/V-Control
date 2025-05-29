@@ -10,14 +10,18 @@ const App = {
         // Initialize request manager with initial data
         RequestManager.init(initialChangeRequests);
         
+        // Initialize comment manager with initial data
+        CommentManager.init(initialComments);
+        
         // Set up event listeners
         this.setupEventListeners();
         
         // Show the view tab by default
         this.showTab('view');
         
-        // Update the page name indicator
+        // Update the page name indicator and comments
         this.updatePageNameIndicator();
+        this.updateCommentSystem();
     },
 
     // Update the page name indicator in the fixed action bar
@@ -28,6 +32,12 @@ const App = {
         if (currentPage && pageNameElement) {
             pageNameElement.textContent = currentPage.title;
         }
+    },
+
+    // Update comment system for current page
+    updateCommentSystem: function() {
+        // Set active page in comment manager
+        CommentManager.setActivePage(PageManager.activePage);
     },
 
     // Handle page deletion with confirmation
@@ -48,6 +58,9 @@ const App = {
         const relatedRequests = RequestManager.getRequestsByPage(PageManager.activePage);
         const pendingRequests = relatedRequests.filter(r => r.status === 'pending');
         
+        // Check for active comments
+        const relatedComments = CommentManager.getCommentsByPage(PageManager.activePage);
+        
         let confirmMessage = `Are you sure you want to delete "${currentPage.title}"?\n\nThis action cannot be undone.`;
         
         if (relatedRequests.length > 0) {
@@ -58,6 +71,10 @@ const App = {
             confirmMessage += ' that will also be deleted.';
         }
 
+        if (relatedComments.length > 0) {
+            confirmMessage += `\n\nThis page also has ${relatedComments.length} comment(s) that will be deleted.`;
+        }
+
         // Confirm deletion
         if (!confirm(confirmMessage)) {
             return;
@@ -66,16 +83,23 @@ const App = {
         // Perform deletion
         const success = PageManager.deletePage(PageManager.activePage);
         if (success) {
+            // Clean up comments for deleted page
+            CommentManager.cleanup();
+            
             // Show confirmation message
             let successMessage = `Page "${currentPage.title}" has been deleted successfully.`;
             if (relatedRequests.length > 0) {
                 successMessage += `\n${relatedRequests.length} related change request(s) were also removed.`;
             }
+            if (relatedComments.length > 0) {
+                successMessage += `\n${relatedComments.length} comment(s) were also removed.`;
+            }
             alert(successMessage);
             
-            // Switch to view tab after deletion and update page name
+            // Switch to view tab after deletion and update systems
             this.showTab('view');
             this.updatePageNameIndicator();
+            this.updateCommentSystem();
         } else {
             alert('Failed to delete the page. Please try again.');
         }
@@ -130,6 +154,7 @@ const App = {
                 this.showTab('edit');
                 PageManager.prepareEditPage();
                 this.updatePageNameIndicator();
+                this.updateCommentSystem();
             }
         });
 
@@ -158,6 +183,18 @@ const App = {
                 this.hideImportModal();
             }
         });
+
+        // Page navigation events - Update comment system when page changes
+        document.addEventListener('click', (e) => {
+            const pageItem = e.target.closest('.page-item');
+            if (pageItem) {
+                // Small delay to ensure PageManager has updated first
+                setTimeout(() => {
+                    this.updatePageNameIndicator();
+                    this.updateCommentSystem();
+                }, 10);
+            }
+        });
     },
     
     // Switch between tabs
@@ -179,8 +216,15 @@ const App = {
         // Special handling for tabs
         if (tabName === 'edit') {
             PageManager.prepareEditPage();
+            // Clean up comments when entering edit mode
+            CommentManager.cleanup();
         } else if (tabName === 'requests') {
             RequestManager.renderChangeRequests();
+        } else if (tabName === 'view') {
+            // Update comment system when returning to view mode
+            setTimeout(() => {
+                this.updateCommentSystem();
+            }, 100);
         }
     },
     
@@ -235,8 +279,9 @@ const App = {
             const finalUrl = url === 'demo' ? 'demo' : (url.startsWith('http') ? url : 'https://' + url);
             await PageManager.importFromWeb(finalUrl, customTitle, importStyles);
             
-            // Update page name indicator after successful import
+            // Update page name indicator and comment system after successful import
             this.updatePageNameIndicator();
+            this.updateCommentSystem();
         } catch (error) {
             console.error('Import failed:', error);
         } finally {
