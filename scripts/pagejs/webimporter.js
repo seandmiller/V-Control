@@ -37,18 +37,19 @@ const WebImporter = {
                 throw new Error('No readable content found on the webpage');
             }
 
-            // Extract styles if requested
+            // Process styles if requested (now using CSSProcessor)
             let finalContent = content;
             if (importStyles && url !== 'demo') {
-                statusEl.textContent = 'Extracting webpage styles...';
-                const extractedStyles = this.extractStyles(doc, url);
-                if (extractedStyles) {
+                statusEl.textContent = 'Processing webpage styles...';
+                
+                const styleResult = CSSProcessor.processImportedStyles(doc, url, true);
+                
+                if (styleResult.hasStyles) {
                     // Wrap content with scoped styles
-                    const scopeId = 'imported-content-' + Date.now();
-                    finalContent = `<div class="${scopeId}">
+                    finalContent = `<div class="${styleResult.scopeId}">
 <style>
 /* Imported styles from: ${url} */
-${this.scopeStyles(extractedStyles, '.' + scopeId)}
+${styleResult.styles}
 </style>
 ${content}
 </div>`;
@@ -126,177 +127,6 @@ ${content}
         }
         
         return null;
-    },
-
-    // Extract styles from the parsed HTML document
-    extractStyles: function(doc, baseUrl) {
-        let styles = '';
-        
-        // Extract inline styles from <style> tags
-        const styleTags = doc.querySelectorAll('style');
-        styleTags.forEach(styleTag => {
-            if (styleTag.textContent) {
-                styles += styleTag.textContent + '\n';
-            }
-        });
-        
-        // Extract common inline styles from key elements (more selective)
-        const contentElements = doc.querySelectorAll('article [style], main [style], .content [style], #content [style]');
-        const inlineStyles = new Set();
-        
-        contentElements.forEach(element => {
-            const tagName = element.tagName.toLowerCase();
-            const inlineStyle = element.getAttribute('style');
-            if (inlineStyle && this.isSafeStyle(inlineStyle)) {
-                // Create more specific selectors to avoid conflicts
-                const firstClass = element.className ? element.className.split(' ')[0].trim() : '';
-                const selector = firstClass ? `${tagName}.${firstClass}` : tagName;
-                const cssRule = `${selector} { ${inlineStyle} }`;
-                inlineStyles.add(cssRule);
-            }
-        });
-        
-        // Add collected inline styles
-        if (inlineStyles.size > 0) {
-            styles += '\n/* Converted inline styles */\n';
-            styles += Array.from(inlineStyles).join('\n') + '\n';
-        }
-        
-        // Clean up problematic styles
-        styles = this.sanitizeStyles(styles);
-        
-        // Add some basic typography and layout styles
-        styles += `\n/* Basic imported content styles */
-h1, h2, h3, h4, h5, h6 { margin: 1em 0 0.5em 0; line-height: 1.2; }
-p { margin: 0.5em 0; }
-ul, ol { margin: 0.5em 0; padding-left: 2em; }
-blockquote { margin: 1em 0; padding: 0.5em 1em; border-left: 3px solid #ccc; background: #f9f9f9; }
-code { background: #f5f5f5; padding: 0.2em 0.4em; border-radius: 3px; }
-pre { background: #f5f5f5; padding: 1em; border-radius: 5px; overflow-x: auto; }
-img { max-width: 100%; height: auto; }
-`;
-        
-        return styles.trim();
-    },
-
-    // Check if a style is safe to import
-    isSafeStyle: function(styleText) {
-        const unsafe = [
-            'position: fixed',
-            'position: absolute',
-            'z-index',
-            'transform',
-            'animation',
-            'transition',
-            '@import',
-            'javascript:',
-            'expression(',
-            'behavior:'
-        ];
-        
-        const lowerStyle = styleText.toLowerCase();
-        return !unsafe.some(unsafePattern => lowerStyle.includes(unsafePattern));
-    },
-
-    // Sanitize CSS to remove problematic rules
-    sanitizeStyles: function(css) {
-        const lines = css.split('\n');
-        const safeLines = [];
-        
-        for (let line of lines) {
-            const trimmedLine = line.trim().toLowerCase();
-            
-            // Skip problematic CSS rules
-            if (
-                trimmedLine.includes('position: fixed') ||
-                trimmedLine.includes('position: absolute') ||
-                trimmedLine.includes('z-index') ||
-                trimmedLine.includes('transform:') ||
-                trimmedLine.includes('animation:') ||
-                trimmedLine.includes('@import') ||
-                trimmedLine.includes('javascript:') ||
-                trimmedLine.includes('expression(') ||
-                trimmedLine.includes('behavior:') ||
-                trimmedLine.includes('overflow: hidden') ||
-                (trimmedLine.includes('width:') && trimmedLine.includes('100vw')) ||
-                (trimmedLine.includes('height:') && trimmedLine.includes('100vh'))
-            ) {
-                // Skip this line
-                continue;
-            }
-            
-            safeLines.push(line);
-        }
-        
-        return safeLines.join('\n');
-    },
-
-    // Scope CSS styles to a specific container
-    scopeStyles: function(css, scopeSelector) {
-        const lines = css.split('\n');
-        const scopedLines = [];
-        let inMediaQuery = false;
-        let braceDepth = 0;
-        
-        for (let line of lines) {
-            const trimmedLine = line.trim();
-            
-            // Skip empty lines and comments
-            if (!trimmedLine || trimmedLine.startsWith('/*') || trimmedLine.endsWith('*/')) {
-                scopedLines.push(line);
-                continue;
-            }
-            
-            // Track media queries and other at-rules
-            if (trimmedLine.startsWith('@')) {
-                scopedLines.push(line);
-                if (trimmedLine.includes('{')) {
-                    inMediaQuery = true;
-                    braceDepth++;
-                }
-                continue;
-            }
-            
-            // Track brace depth
-            const openBraces = (line.match(/{/g) || []).length;
-            const closeBraces = (line.match(/}/g) || []).length;
-            braceDepth += openBraces - closeBraces;
-            
-            // If we're closing a media query
-            if (inMediaQuery && braceDepth === 0) {
-                inMediaQuery = false;
-                scopedLines.push(line);
-                continue;
-            }
-            
-            // Handle CSS rules more robustly  
-            if (trimmedLine.includes('{')) {
-                const parts = line.split('{');
-                const selector = parts[0].trim();
-                const rest = parts.slice(1).join('{');
-                
-                if (selector && !selector.startsWith('@') && !selector.includes(scopeSelector)) {
-                    // Split multiple selectors and scope each one
-                    const selectors = selector.split(',').map(s => s.trim());
-                    const scopedSelectors = selectors.map(sel => {
-                        // Don't scope if it's already scoped, a pseudo-selector, or keyframe
-                        if (sel.includes(scopeSelector) || sel.startsWith(':') || sel.startsWith('@')) {
-                            return sel;
-                        }
-                        return `${scopeSelector} ${sel}`;
-                    });
-                    
-                    scopedLines.push(line.replace(selector, scopedSelectors.join(', ')));
-                } else {
-                    scopedLines.push(line);
-                }
-            } else {
-                // This is a property line or continuation
-                scopedLines.push(line);
-            }
-        }
-        
-        return scopedLines.join('\n');
     },
 
     // Extract main content from parsed HTML document
